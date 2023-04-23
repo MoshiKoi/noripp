@@ -15,6 +15,7 @@ namespace nori::parse {
 	X(In, InNode) \
 	X(AsciiIn, AsciiInNode) \
 	X(Out, OutNode) \
+	X(AsciiOut, AsciiOutNode) \
 	X(Swap, SwapNode) \
 	X(Reverse, ReverseNode) \
 	X(Dup, DupNode) \

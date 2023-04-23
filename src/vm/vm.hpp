@@ -1,5 +1,4 @@
 #pragma once
-#include <stdint.h>
 #ifndef NORIVM_HPP
 #define NORIVM_HPP
 
@@ -114,6 +113,15 @@ class VM {
 
 			case Op::Out:
 				std::visit([](auto const &val) { std::cout << val; }, pop());
+				advance();
+				break;
+
+			case Op::AsciiOut:
+				std::visit(
+				    overloaded{
+				        [](float const &&val) { std::cout << static_cast<char>(val); },
+				        [](std::string const &&) { throw std::runtime_error{"Ascii out on string"}; }},
+				    pop());
 				advance();
 				break;
 

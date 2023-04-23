@@ -15,6 +15,7 @@ namespace nori::parse {
 	X(In, 'I') \
 	X(AsciiIn, ',') \
 	X(Out, 'O') \
+	X(AsciiOut, '.') \
 	X(Swap, '@') \
 	X(Reverse, '$') \
 	X(Dup, ':') \

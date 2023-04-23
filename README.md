@@ -12,7 +12,7 @@ There are no stability guarentees about the bytecode format.
 | `I` | ✅ | Push the user input |
 | `,` | ✅ | Push the user input as an ASCII value |
 | `O` | ✅ | Output the last value to the console then pop it |
-| `.` | ❌ | Output the last ASCII value to the console then pop it |
+| `.` | ✅ | Output the last ASCII value to the console then pop it |
 | `@` | ✅ | Swap the last two values |
 | `$` | ✅ | Reverse the whole stack |
 | `:` | ✅ | Duplicate the top value |

@@ -12,6 +12,7 @@ namespace nori::vm {
 	X(InNode, In) \
 	X(AsciiInNode, AsciiIn) \
 	X(OutNode, Out) \
+	X(AsciiOutNode, AsciiOut) \
 	X(SwapNode, Swap) \
 	X(ReverseNode, Reverse) \
 	X(DupNode, Dup) \
