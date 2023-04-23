@@ -1,8 +1,8 @@
 #include <cmath>
 #include <variant>
 
-#include "vm.hpp"
 #include "../utils.hpp"
+#include "vm.hpp"
 
 namespace nori::vm {
 
@@ -21,10 +21,7 @@ NoriValue
 mod(NoriValue const &a, NoriValue const &b) {
 	return std::visit(
 	    overloaded{
-	        [](float const &a, float const &b) -> NoriValue {
-		        // TODO: Actual validation or smth
-		        return (float)((int)a % (int)b);
-	        },
+	        [](float const &a, float const &b) -> NoriValue { return a - std::floor(a / b) * b; },
 	        [](auto, auto) -> NoriValue { throw InvalidOperandException{}; }},
 	    a, b);
 }
