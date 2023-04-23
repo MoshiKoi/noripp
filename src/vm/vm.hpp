@@ -39,6 +39,7 @@ NoriValue mod(NoriValue const &, NoriValue const &);
 NoriValue floor(NoriValue const &);
 NoriValue ceil(NoriValue const &);
 NoriValue root(NoriValue const &);
+bool truthy(NoriValue const &);
 
 #undef X
 
@@ -217,6 +218,28 @@ class VM {
 				_ip = _buffer;
 				break;
 
+			case Op::ForwardJumpFalse: {
+				advance();
+				std::uint8_t distance = *_ip;
+				advance();
+				if (!truthy(peek())) {
+					load(cur_pos() + distance);
+					_ip = _buffer;
+				}
+				break;
+			}
+
+			case Op::BackwardJumpTrue: {
+				advance();
+				std::uint8_t distance = *_ip;
+				advance();
+				if (truthy(peek())) {
+					load(cur_pos() - distance);
+					_ip = _buffer;
+				}
+				break;
+			}
+
 			default:
 				std::stringstream s{};
 				s << "Unhandled opcode " << static_cast<int>(*_ip) << " at " << cur_pos();
@@ -254,6 +277,7 @@ class VM {
 	}
 
 	void load(std::size_t pos) {
+		_stream.clear();
 		_stream.seekg(pos, std::ios_base::beg);
 		_stream.read(reinterpret_cast<char *>(_buffer), _buffer_size);
 		_buffer_offset = pos;
@@ -282,6 +306,8 @@ class VM {
 		}
 		return ret_val;
 	}
+
+	NoriValue peek() { return _reversed ? _stack.front() : _stack.back(); }
 
 	void swap() {
 		if (_reversed) {

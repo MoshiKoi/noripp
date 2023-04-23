@@ -16,6 +16,12 @@
 
 namespace nori::parse {
 
+class UnexpectedEndOfInput {
+  public:
+	std::vector<TokenType> const expected;
+	UnexpectedEndOfInput(std::vector<TokenType> &&expected) : expected{std::move(expected)} {}
+};
+
 class UnexpectedTokenError {
   public:
 	Token const actual;
@@ -52,6 +58,17 @@ parse(Iter &iter, Iter const &end) {
 			++iter;
 			nodes.emplace_back(parse_push(iter, end));
 			break;
+		case TokenType::LBracket:
+			++iter;
+			nodes.emplace_back(ConditionalNode{parse(iter, end)});
+			if (iter == end) {
+				throw UnexpectedEndOfInput{{TokenType::RBracket}};
+			} else if ((*iter).type != TokenType::RBracket) {
+				throw UnexpectedTokenError{{TokenType::RBracket}, *iter};
+			}
+			++iter;
+			break;
+		case TokenType::RBracket: goto end;
 
 #define X(TokenName, NodeName) \
 	case TokenType::TokenName: \
@@ -67,6 +84,7 @@ parse(Iter &iter, Iter const &end) {
 #undef X
 		}
 	}
+end:
 
 	return nodes;
 }

@@ -60,3 +60,5 @@ A fuller description of syntax and other things are available at [nori.io](https
 | `b` | ✅ | Push a random bit (either 0 or 1) |
 | `B` | ✅ | Push a random byte |
 | `W` | ✅ | Set the IP position to 0 (wrap around the program) |
+| `[` | ✅ | Jump to matching `]` if the top of the stack is zero |
+| `]` | ✅ | Jump to matching `[` if the top of the stack is non-zero |

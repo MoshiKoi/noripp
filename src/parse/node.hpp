@@ -58,9 +58,9 @@ class PushNode {
 };
 
 class ConditionalNode {
-	std::vector<Node> body;
 
   public:
+	std::vector<Node> body;
 	ConditionalNode(std::vector<Node> &&body) : body{std::move(body)} {}
 };
 

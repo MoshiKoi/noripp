@@ -24,7 +24,7 @@ insert_string(std::vector<char> &buffer, std::string const &value) {
 }
 
 void
-compile(std::vector<char> &result, parse::PushNode node) {
+compile(std::vector<char> &result, parse::PushNode const &node) {
 	std::visit(
 	    overloaded{
 	        [&](float const &value) {
@@ -39,7 +39,7 @@ compile(std::vector<char> &result, parse::PushNode node) {
 }
 
 #define X(NodeName, OpName) \
-	void compile(std::vector<char> &result, parse::NodeName node) { \
+	void compile(std::vector<char> &result, parse::NodeName const &node) { \
 		result.emplace_back(vm::Op::OpName); \
 	}
 
@@ -47,18 +47,33 @@ XNODES_TO_OP
 
 #undef X
 
+std::vector<char> compile_body(std::vector<parse::Node> const &nodes);
+
 void
-compile(std::vector<char> &result, parse::ConditionalNode node) {
-	throw std::runtime_error{"Conditional is not implemented"};
+compile(std::vector<char> &result, parse::ConditionalNode const &node) {
+	auto const inner = compile_body(node.body);
+
+	result.emplace_back(vm::Op::ForwardJumpFalse);
+	result.emplace_back(inner.size() + 2);
+	result.insert(result.end(), inner.begin(), inner.end());
+	result.emplace_back(vm::Op::BackwardJumpTrue);
+	result.emplace_back(inner.size() + 2);
 }
 
 std::vector<char>
-compile(std::vector<parse::Node> const &nodes) {
+compile_body(std::vector<parse::Node> const &nodes) {
 	std::vector<char> result{};
 
 	for (auto const &node : nodes) {
 		std::visit([&](auto &&x) { compile(result, x); }, node);
 	}
+
+	return result;
+}
+
+std::vector<char>
+compile(std::vector<parse::Node> const &nodes) {
+	auto result = compile_body(nodes);
 
 	result.emplace_back(vm::Op::Return);
 

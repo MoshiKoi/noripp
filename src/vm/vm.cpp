@@ -62,6 +62,15 @@ root(NoriValue const &a) {
 	    a);
 }
 
+bool
+truthy(NoriValue const &a) {
+	return std::visit(
+	    overloaded{
+	        [](float const &a) -> bool { return a != 0; },
+	        [] (auto) -> bool { throw InvalidOperandException{}; }},
+	    a);
+}
+
 #undef X
 
 } // namespace nori::vm

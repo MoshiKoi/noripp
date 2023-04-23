@@ -31,7 +31,9 @@ namespace nori::parse {
 	X(Rand, 'r') \
 	X(BitRand, 'b') \
 	X(ByteRand, 'B') \
-	X(JumpBegin, 'W')
+	X(JumpBegin, 'W') \
+	X(LBracket, '[') \
+	X(RBracket, ']') \
 
 #define X(Name, Symbol) Name,
 
