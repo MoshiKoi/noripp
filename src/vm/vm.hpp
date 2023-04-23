@@ -14,6 +14,8 @@
 #include <sstream>
 #include <stdexcept>
 
+#include <fmt/core.h>
+
 #include "../common.hpp"
 #include "op.hpp"
 
@@ -113,14 +115,14 @@ class VM {
 			}
 
 			case Op::Out:
-				std::visit([](auto const &val) { std::cout << val; }, pop());
+				std::visit([](auto const &val) { fmt::print("{}", val); }, pop());
 				advance();
 				break;
 
 			case Op::AsciiOut:
 				std::visit(
 				    overloaded{
-				        [](float const &&val) { std::cout << static_cast<char>(val); },
+				        [](float const &&val) { fmt::print("{}", static_cast<char>(val)); },
 				        [](std::string const &&) { throw std::runtime_error{"Ascii out on string"}; }},
 				    pop());
 				advance();

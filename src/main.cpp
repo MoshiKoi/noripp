@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <string_view>
 
+#include <fmt/ranges.h>
+
 #include "compile.hpp"
 #include "parse/parse.hpp"
 #include "parse/tokenio.hpp"
@@ -37,9 +39,7 @@ compile(std::string_view const &source, bool debug = false) {
 	auto const nodes = nori::parse::parse(iter, end);
 
 	if (debug) {
-		for (auto const &tok : toks)
-			std::cout << tok << ' ';
-		std::cout << '\n';
+		fmt::print("{}\n", toks);
 	}
 
 	auto const buffer = nori::compile(nodes);
@@ -49,7 +49,7 @@ compile(std::string_view const &source, bool debug = false) {
 int
 run(int argc, char const **argv) {
 	if (argc < 2) {
-		std::cout << "File required\n";
+		fmt::print("File required\n");
 		return 1;
 	}
 
@@ -63,7 +63,7 @@ build(int argc, char const **argv) {
 	using namespace nori::vm;
 
 	if (argc < 2) {
-		std::cout << "File required\n";
+		fmt::print("File required\n");
 		return 1;
 	}
 
@@ -96,7 +96,7 @@ build(int argc, char const **argv) {
 		return 1;
 	}
 
-	std::cout << "Compiled to " << filename << '\n';
+	fmt::print("Compiled to {}\n", filename);
 	return 0;
 }
 
@@ -149,8 +149,9 @@ main(int argc, char const **argv) {
 			return exec(argc - 1, argv + 1);
 	}
 
-	std::cout << "Usage:\n"
-	             "\tnori run [file]\n"
-	             "\tnori build [file]\n";
+	fmt::print("Usage:\n"
+	           "\tnori run [file]\n"
+	           "\tnori build [file]\n"
+			   "\tnori exec [file]\n");
 	return 1;
 }
