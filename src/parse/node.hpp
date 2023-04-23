@@ -11,7 +11,9 @@ namespace nori::parse {
 
 #define XNODES \
 	X(Pop, PopNode) \
+	X(NumericIn, NumericInNode) \
 	X(In, InNode) \
+	X(AsciiIn, AsciiInNode) \
 	X(Out, OutNode) \
 	X(Swap, SwapNode) \
 	X(Reverse, ReverseNode) \

@@ -8,9 +8,9 @@ There are no stability guarentees about the bytecode format.
 |-|-|-|
 | `>` | ✅ | Push the value next to it |
 | `<` | ✅ | Pop the last value |
-| `N` | ❌ | Push the numeric user input |
+| `N` | ✅ | Push the numeric user input |
 | `I` | ✅ | Push the user input |
-| `,` | ❌ | Push the user input as an ASCII value |
+| `,` | ✅ | Push the user input as an ASCII value |
 | `O` | ✅ | Output the last value to the console then pop it |
 | `.` | ❌ | Output the last ASCII value to the console then pop it |
 | `@` | ✅ | Swap the last two values |

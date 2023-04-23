@@ -1,4 +1,5 @@
 #pragma once
+#include <stdint.h>
 #ifndef NORIVM_HPP
 #define NORIVM_HPP
 
@@ -87,10 +88,26 @@ class VM {
 				advance();
 				break;
 
+			case Op::NumericIn: {
+				float res;
+				std::cin >> res;
+				push(res);
+				advance();
+				break;
+			}
+
 			case Op::In: {
 				std::string res;
 				std::cin >> res;
 				push(res);
+				advance();
+				break;
+			}
+
+			case Op::AsciiIn: {
+				char res;
+				std::cin >> res;
+				push(static_cast<float>(res));
 				advance();
 				break;
 			}

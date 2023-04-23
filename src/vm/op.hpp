@@ -8,7 +8,9 @@ namespace nori::vm {
 
 #define XNODES_TO_OP \
 	X(PopNode, Pop) \
+	X(NumericInNode, NumericIn) \
 	X(InNode, In) \
+	X(AsciiInNode, AsciiIn) \
 	X(OutNode, Out) \
 	X(SwapNode, Swap) \
 	X(ReverseNode, Reverse) \

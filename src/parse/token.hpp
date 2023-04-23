@@ -11,7 +11,9 @@ namespace nori::parse {
 #define XSYMBOLS \
 	X(Push, '>') \
 	X(Pop, '<') \
+	X(NumericIn, 'N') \
 	X(In, 'I') \
+	X(AsciiIn, ',') \
 	X(Out, 'O') \
 	X(Swap, '@') \
 	X(Reverse, '$') \
