@@ -1,8 +1,39 @@
-# C++ virtual machine version of Nori.IO
+# C++ virtual machine version of [nori.io](https://github.com/mkukiro/nori.io)
 
 Mostly made to practice making a virtual machine.
 
 There are no stability guarentees about the bytecode format.
+
+## Usage
+
+### Compile a file to bytecode
+
+```
+nori build <file.nori>
+```
+
+Outputs into `file.nr`
+
+### Run a bytecode file
+
+```
+nori run <file.nr>
+```
+
+### Compile and run (no output file)
+
+Useful if you just want to experiment
+
+```
+nori exec
+nori exec <file.nori>
+```
+
+If you don't pass a file to the command, it will read from standard input.
+
+## Commands
+
+A fuller description of syntax and other things are available at [nori.io](https://github.com/mkukiro/nori.io) and [the wiki](https://esolangs.org/wiki/Nori.io). 
 
 | Command | Status | Description |
 |-|-|-|
