@@ -32,18 +32,17 @@ insert_string(std::vector<char> &buffer, std::string const &value) {
 
 void
 compile(std::vector<char> &result, parse::PushNode node) {
-	// clang-format off
-    std::visit(overloaded {
-        [&](float const &value) {
-            result.emplace_back(vm::Op::Push);
-            insert_float(result, value);
-        },
-        [&](std::string const &value) {
-            result.emplace_back(vm::Op::PushString);
-            insert_string(result, value);
-        }},
+	std::visit(
+	    overloaded{
+	        [&](float const &value) {
+		        result.emplace_back(vm::Op::Push);
+		        insert_float(result, value);
+	        },
+	        [&](std::string const &value) {
+		        result.emplace_back(vm::Op::PushString);
+		        insert_string(result, value);
+	        }},
 	    node.value);
-	// clang-format on
 }
 
 #define X(NodeName, OpName) \

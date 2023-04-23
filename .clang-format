@@ -8,3 +8,4 @@ AllowShortFunctionsOnASingleLine: Inline
 AllowShortBlocksOnASingleLine: Always
 AllowShortCaseLabelsOnASingleLine: true
 AlignEscapedNewlines: DontAlign
+AlignAfterOpenBracket: AlwaysBreak

@@ -213,10 +213,10 @@ class VM {
 
 	std::random_device device;
 	std::mt19937 rng{device()};
-	std::uniform_real_distribution<float> float_dis{std::numeric_limits<float>::min(),
-	                                                std::numeric_limits<float>::max()};
-	std::uniform_int_distribution<unsigned> byte_dis{std::numeric_limits<unsigned>::min(),
-	                                                 std::numeric_limits<unsigned>::max()};
+	std::uniform_real_distribution<float> float_dis{
+	    std::numeric_limits<float>::min(), std::numeric_limits<float>::max()};
+	std::uniform_int_distribution<unsigned> byte_dis{
+	    std::numeric_limits<unsigned>::min(), std::numeric_limits<unsigned>::max()};
 
 	// Bytecode loading
 

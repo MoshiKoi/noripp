@@ -23,22 +23,21 @@ operator<<(std::ostream &os, nori::parse::Token const &tok) {
 		XSYMBOLS
 
 	case nori::parse::TokenType::Value:
-		// clang-format off
-		std::visit(overloaded{
-                [&](float const &val) { os << "Float(" << val << ')'; },
-                [&](std::string const &val) {
-                    os << "String(\"";
-                    for (auto const &c : val) {
-                        switch (c) {
-                            case '\n': os << "\\n"; break;
-                            case '\t': os << "\\t"; break;
-                            default: os << c; break;
-                        }
-                    }
-                    os << "\")"; }
-            },
-            tok.value.value());
-		// clang-format on
+		std::visit(
+		    overloaded{
+		        [&](float const &val) { os << "Float(" << val << ')'; },
+		        [&](std::string const &val) {
+			        os << "String(\"";
+			        for (auto const &c : val) {
+				        switch (c) {
+				        case '\n': os << "\\n"; break;
+				        case '\t': os << "\\t"; break;
+				        default: os << c; break;
+				        }
+			        }
+			        os << "\")";
+		        }},
+		    tok.value.value());
 		break;
 	default: throw new std::runtime_error{"Unhandled token type"};
 	}
