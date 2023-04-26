@@ -3,8 +3,8 @@
 #include <stdexcept>
 #include <string>
 
-#include "tokenio.hpp"
 #include "../utils.hpp"
+#include "tokenio.hpp"
 
 std::ostream &
 operator<<(std::ostream &os, nori::parse::Token const &tok) {
@@ -32,6 +32,7 @@ operator<<(std::ostream &os, nori::parse::Token const &tok) {
 		        }},
 		    tok.value.value());
 		break;
+	case nori::parse::TokenType::Error: os << "Error"; break;
 	default: throw new std::runtime_error{"Unhandled token type"};
 	}
 	return os;
@@ -42,6 +43,8 @@ operator<<(std::ostream &os, nori::parse::TokenType const &ty) {
 	switch (ty) {
 		XSYMBOLS
 #undef X
+	case nori::parse::TokenType::Value: os << "Value"; break;
+	case nori::parse::TokenType::Error: os << "Error"; break;
 	default: throw new std::runtime_error{"Unhandled token type"};
 	}
 

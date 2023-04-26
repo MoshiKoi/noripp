@@ -37,7 +37,7 @@ namespace nori::parse {
 
 #define X(Name, Symbol) Name,
 
-enum class TokenType { Value, XSYMBOLS };
+enum class TokenType { Value, Error, XSYMBOLS };
 
 #undef X
 
