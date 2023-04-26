@@ -225,8 +225,12 @@ class VM {
 				std::uint8_t distance = *_ip;
 				advance();
 				if (!truthy(peek())) {
-					load(cur_pos() + distance);
-					_ip = _buffer;
+					if ((_ip - _buffer) + distance >= _buffer_size) {
+						load(cur_pos() + distance);
+						_ip = _buffer;
+					} else {
+						_ip += distance;
+					}
 				}
 				break;
 			}
@@ -236,8 +240,12 @@ class VM {
 				std::uint8_t distance = *_ip;
 				advance();
 				if (truthy(peek())) {
-					load(cur_pos() - distance);
-					_ip = _buffer;
+					if ((_ip - _buffer) - distance < 0) {
+						load(cur_pos() - distance);
+						_ip = _buffer;
+					} else {
+						_ip -= distance;
+					}
 				}
 				break;
 			}
