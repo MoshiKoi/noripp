@@ -18,7 +18,7 @@ operator<<(std::ostream &os, nori::parse::Token const &tok) {
 	case nori::parse::TokenType::Value:
 		std::visit(
 		    overloaded{
-		        [&](float const &val) { os << "Float(" << val << ')'; },
+		        [&](double const &val) { os << "double(" << val << ')'; },
 		        [&](std::string const &val) {
 			        os << "String(\"";
 			        for (auto const &c : val) {

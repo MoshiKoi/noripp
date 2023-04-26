@@ -9,7 +9,7 @@
 
 namespace nori {
 
-using NoriValue = std::variant<float, std::string>;
+using NoriValue = std::variant<double, std::string>;
 
 }
 

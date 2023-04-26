@@ -32,7 +32,7 @@ class Tokens {
 
 		iterator &operator++() {
 			while (_cur != _end) {
-				bool is_float = false;
+				bool is_double = false;
 				switch (*_cur) {
 
 #define X(Name, Symbol) \
@@ -44,18 +44,18 @@ class Tokens {
 					XSYMBOLS
 
 #undef X
-				case 'F': is_float = true; ++_cur;
+				case 'F': is_double = true; ++_cur;
 				case '0' ... '9': {
 					auto const begin = _cur;
 					while (_cur != _end && '0' <= *_cur && *_cur <= '9')
 						++_cur;
-					if (is_float && _cur != _end && *_cur == '.') {
+					if (is_double && _cur != _end && *_cur == '.') {
 						++_cur;
 						while (_cur != _end && '0' <= *_cur && *_cur <= '9')
 							++_cur;
 					}
 					std::string_view const view{begin, _cur};
-					float res;
+					double res;
 					auto const [_, ec] = std::from_chars(view.data(), view.data() + view.size(), res);
 					if (ec == std::errc::invalid_argument || ec == std::errc::result_out_of_range) {
 						_currentToken = {.type = TokenType::Error};

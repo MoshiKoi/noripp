@@ -21,7 +21,7 @@
 
 namespace nori::vm {
 
-static_assert(std::numeric_limits<float>::is_iec559, "Floating point format must be IEEE binary32");
+static_assert(std::numeric_limits<double>::is_iec559, "doubleing point format must be IEEE binary32");
 static_assert(CHAR_BIT == 8, "Bytecode requires chars to be 8 bits");
 
 class InvalidOperandException {};
@@ -61,16 +61,12 @@ class VM {
 
 			case Op::Push:
 				advance();
-				std::array<char, 4> x;
-				x[0] = *_ip;
-				advance();
-				x[1] = *_ip;
-				advance();
-				x[2] = *_ip;
-				advance();
-				x[3] = *_ip;
-				advance();
-				push(std::bit_cast<float>(x));
+				std::array<char, 8> x;
+				for (int i = 0; i < 8; ++i) {
+					x[i] = *_ip;
+					advance();
+				}
+				push(std::bit_cast<double>(x));
 				break;
 
 			case Op::PushString: {
@@ -91,7 +87,7 @@ class VM {
 				break;
 
 			case Op::NumericIn: {
-				float res;
+				double res;
 				std::cin >> res;
 				push(res);
 				advance();
@@ -109,7 +105,7 @@ class VM {
 			case Op::AsciiIn: {
 				char res;
 				std::cin >> res;
-				push(static_cast<float>(res));
+				push(static_cast<double>(res));
 				advance();
 				break;
 			}
@@ -122,7 +118,7 @@ class VM {
 			case Op::AsciiOut:
 				std::visit(
 				    overloaded{
-				        [](float const &&val) { fmt::print("{}", static_cast<char>(val)); },
+				        [](double const &&val) { fmt::print("{}", static_cast<char>(val)); },
 				        [](std::string const &&) { throw std::runtime_error{"Ascii out on string"}; }},
 				    pop());
 				advance();
@@ -201,17 +197,17 @@ class VM {
 				break;
 
 			case Op::Rand:
-				push(float_dis(rng));
+				push(double_dis(rng));
 				advance();
 				break;
 
 			case Op::BitRand:
-				push(static_cast<float>(byte_dis(rng) % 2));
+				push(static_cast<double>(byte_dis(rng) % 2));
 				advance();
 				break;
 
 			case Op::ByteRand:
-				push(static_cast<float>(byte_dis(rng) % 256));
+				push(static_cast<double>(byte_dis(rng) % 256));
 				advance();
 				break;
 
@@ -271,8 +267,8 @@ class VM {
 
 	std::random_device device;
 	std::mt19937 rng{device()};
-	std::uniform_real_distribution<float> float_dis{
-	    std::numeric_limits<float>::min(), std::numeric_limits<float>::max()};
+	std::uniform_real_distribution<double> double_dis{
+	    std::numeric_limits<double>::min(), std::numeric_limits<double>::max()};
 	std::uniform_int_distribution<unsigned> byte_dis{
 	    std::numeric_limits<unsigned>::min(), std::numeric_limits<unsigned>::max()};
 

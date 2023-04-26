@@ -12,8 +12,8 @@
 namespace nori {
 
 void
-insert_float(std::vector<char> &buffer, float x) {
-	auto const arr = std::bit_cast<std::array<char, 4>>(x);
+insert_double(std::vector<char> &buffer, double x) {
+	auto const arr = std::bit_cast<std::array<char, 8>>(x);
 	buffer.insert(buffer.end(), arr.begin(), arr.end());
 }
 
@@ -27,9 +27,9 @@ void
 compile(std::vector<char> &result, parse::PushNode const &node) {
 	std::visit(
 	    overloaded{
-	        [&](float const &value) {
+	        [&](double const &value) {
 		        result.emplace_back(vm::Op::Push);
-		        insert_float(result, value);
+		        insert_double(result, value);
 	        },
 	        [&](std::string const &value) {
 		        result.emplace_back(vm::Op::PushString);

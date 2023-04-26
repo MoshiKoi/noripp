@@ -10,7 +10,7 @@ namespace nori::vm {
 	NoriValue Name(NoriValue const &a, NoriValue const &b) { \
 		return std::visit( \
 		    overloaded{ \
-		        [](float const &a, float const &b) -> NoriValue { return a Op b; }, \
+		        [](double const &a, double const &b) -> NoriValue { return a Op b; }, \
 		        [](auto, auto) -> NoriValue { throw InvalidOperandException{}; }}, \
 		    a, b); \
 	}
@@ -21,7 +21,7 @@ NoriValue
 mod(NoriValue const &a, NoriValue const &b) {
 	return std::visit(
 	    overloaded{
-	        [](float const &a, float const &b) -> NoriValue { return a - std::floor(a / b) * b; },
+	        [](double const &a, double const &b) -> NoriValue { return a - std::floor(a / b) * b; },
 	        [](auto, auto) -> NoriValue { throw InvalidOperandException{}; }},
 	    a, b);
 }
@@ -30,7 +30,7 @@ NoriValue
 pow(NoriValue const &a, NoriValue const &b) {
 	return std::visit(
 	    overloaded{
-	        [](float const &a, float const &b) -> NoriValue { return std::pow(a, b); },
+	        [](double const &a, double const &b) -> NoriValue { return std::pow(a, b); },
 	        [](auto, auto) -> NoriValue { throw InvalidOperandException{}; }},
 	    a, b);
 }
@@ -39,7 +39,7 @@ NoriValue
 floor(NoriValue const &a) {
 	return std::visit(
 	    overloaded{
-	        [](float const &a) -> NoriValue { return std::floor(a); },
+	        [](double const &a) -> NoriValue { return std::floor(a); },
 	        [](auto) -> NoriValue { throw InvalidOperandException{}; }},
 	    a);
 }
@@ -48,7 +48,7 @@ NoriValue
 ceil(NoriValue const &a) {
 	return std::visit(
 	    overloaded{
-	        [](float const &a) -> NoriValue { return std::ceil(a); },
+	        [](double const &a) -> NoriValue { return std::ceil(a); },
 	        [](auto) -> NoriValue { throw InvalidOperandException{}; }},
 	    a);
 }
@@ -57,7 +57,7 @@ NoriValue
 root(NoriValue const &a) {
 	return std::visit(
 	    overloaded{
-	        [](float const &a) -> NoriValue { return std::sqrt(a); },
+	        [](double const &a) -> NoriValue { return std::sqrt(a); },
 	        [](auto) -> NoriValue { throw InvalidOperandException{}; }},
 	    a);
 }
@@ -66,7 +66,7 @@ bool
 truthy(NoriValue const &a) {
 	return std::visit(
 	    overloaded{
-	        [](float const &a) -> bool { return a != 0; },
+	        [](double const &a) -> bool { return a != 0; },
 	        [] (auto) -> bool { throw InvalidOperandException{}; }},
 	    a);
 }
