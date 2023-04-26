@@ -67,6 +67,7 @@ truthy(NoriValue const &a) {
 	return std::visit(
 	    overloaded{
 	        [](double const &a) -> bool { return a != 0; },
+			[](std::string const &s) -> bool { return true; },
 	        [] (auto) -> bool { throw InvalidOperandException{}; }},
 	    a);
 }
