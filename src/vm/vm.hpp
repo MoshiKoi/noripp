@@ -317,13 +317,13 @@ class VM {
 
 	void swap() {
 		if (_reversed) {
-			auto first = _stack.front();
-			_stack.pop_front();
-			_stack.emplace(_stack.begin() + 1, first);
+			auto &first = _stack.front();
+			auto &second = _stack[1];
+			first.swap(second);
 		} else {
-			auto first = _stack.back();
-			_stack.pop_back();
-			_stack.emplace(_stack.end() - 1, first);
+			auto &first = _stack.back();
+			auto &second = _stack[_stack.size() - 2];
+			first.swap(second);
 		}
 	}
 
