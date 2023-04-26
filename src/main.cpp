@@ -24,6 +24,9 @@ run_stream(std::istream &s) {
 	} catch (nori::vm::InvalidOperandException) {
 		std::cerr << "Attempted to operate on two invalid operands" << std::endl;
 		return 1;
+	} catch (nori::vm::StackException) {
+		std::cerr << "Stack doesn't contain enough elements" << std::endl;
+		return 1;
 	} catch (std::runtime_error err) {
 		std::cerr << err.what() << std::endl;
 		return 1;
@@ -152,6 +155,6 @@ main(int argc, char const **argv) {
 	fmt::print("Usage:\n"
 	           "\tnori run [file]\n"
 	           "\tnori build [file]\n"
-			   "\tnori exec [file]\n");
+	           "\tnori exec [file]\n");
 	return 1;
 }

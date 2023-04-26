@@ -25,6 +25,7 @@ static_assert(std::numeric_limits<double>::is_iec559, "doubleing point format mu
 static_assert(CHAR_BIT == 8, "Bytecode requires chars to be 8 bits");
 
 class InvalidOperandException {};
+class StackException {};
 
 #define XBINOPS \
 	X(add, +) \
@@ -259,7 +260,7 @@ class VM {
 	std::uint8_t *const _buffer;
 	std::size_t const _buffer_size;
 	std::size_t _buffer_offset;
-	std::uint8_t *_ip;
+	std::uint8_t const *_ip;
 	std::deque<NoriValue> _stack;
 	bool _reversed;
 
@@ -289,7 +290,7 @@ class VM {
 		_buffer_offset = pos;
 	}
 
-	std::size_t cur_pos() { return _buffer_offset + (_ip - _buffer); }
+	std::size_t cur_pos() const { return _buffer_offset + (_ip - _buffer); }
 
 	// Stack manipulation
 
@@ -302,6 +303,9 @@ class VM {
 	}
 
 	NoriValue pop() {
+		if (_stack.size() == 0) {
+			throw StackException{};
+		}
 		NoriValue ret_val;
 		if (_reversed) {
 			ret_val = _stack.front();
@@ -313,23 +317,29 @@ class VM {
 		return ret_val;
 	}
 
-	NoriValue peek() { return _reversed ? _stack.front() : _stack.back(); }
+	NoriValue peek() const { return _reversed ? _stack.front() : _stack.back(); }
 
 	void swap() {
+		if (_stack.size() < 2) {
+			throw StackException{};
+		}
 		if (_reversed) {
-			auto &first = _stack.front();
+			auto &first = _stack[0];
 			auto &second = _stack[1];
-			first.swap(second);
+			std::swap(first, second);
 		} else {
-			auto &first = _stack.back();
+			auto &first = _stack[_stack.size() - 1];
 			auto &second = _stack[_stack.size() - 2];
-			first.swap(second);
+			std::swap(first, second);
 		}
 	}
 
 	void reverse() { _reversed = !_reversed; }
 
 	void dup() {
+		if (_stack.size() == 0) {
+			throw StackException{};
+		}
 		if (_reversed) {
 			auto first = _stack.front();
 			_stack.emplace_front(first);
