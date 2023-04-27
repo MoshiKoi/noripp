@@ -28,12 +28,12 @@ class InvalidOperandException {};
 class StackException {};
 
 #define XBINOPS \
-	X(add, +) \
-	X(sub, -) \
-	X(div, /) \
-	X(mul, *)
+	X(add, +, Op::Add) \
+	X(sub, -, Op::Sub) \
+	X(div, /, Op::Mul) \
+	X(mul, *, Op::Div)
 
-#define X(Name, _) NoriValue Name(NoriValue const &, NoriValue const &);
+#define X(Name, ...) void Name(NoriValue const &, NoriValue &);
 
 XBINOPS
 
@@ -140,31 +140,18 @@ class VM {
 				advance();
 				break;
 
-			case Op::Add:
-				push(add(pop(), pop()));
-				advance();
-				break;
+#define X(Name, _, OpCode) \
+	case OpCode: \
+		if (_stack.size() < 2) { \
+			throw StackException{}; \
+		} \
+		Name(peek(), peek(1)); \
+		pop(); \
+		advance(); \
+		break;
 
-			case Op::Sub: {
-				auto x = pop();
-				auto y = pop();
-				push(sub(x, y));
-				advance();
-				break;
-			}
-
-			case Op::Div: {
-				auto x = pop();
-				auto y = pop();
-				push(div(x, y));
-				advance();
-				break;
-			}
-
-			case Op::Mul:
-				push(mul(pop(), pop()));
-				advance();
-				break;
+				XBINOPS
+#undef X
 
 			case Op::Pow: {
 				auto x = pop();
@@ -317,7 +304,8 @@ class VM {
 		return ret_val;
 	}
 
-	NoriValue peek() const { return _reversed ? _stack.front() : _stack.back(); }
+	NoriValue &peek() { return _reversed ? _stack.front() : _stack.back(); }
+	NoriValue &peek(int i) { return _reversed ? _stack[i] : _stack[_stack.size() - 1 - i]; }
 
 	void swap() {
 		if (_stack.size() < 2) {

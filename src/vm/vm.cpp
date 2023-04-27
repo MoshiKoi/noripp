@@ -6,12 +6,12 @@
 
 namespace nori::vm {
 
-#define X(Name, Op) \
-	NoriValue Name(NoriValue const &a, NoriValue const &b) { \
-		return std::visit( \
+#define X(Name, Op, _) \
+	void Name(NoriValue const&a, NoriValue &b) { \
+		 std::visit( \
 		    overloaded{ \
-		        [](double const &a, double const &b) -> NoriValue { return a Op b; }, \
-		        [](auto, auto) -> NoriValue { throw InvalidOperandException{}; }}, \
+		        [&](double const &a_val, double const &b_val) -> void { b.emplace<double>(a_val Op b_val); }, \
+		        [](auto, auto) -> void { throw InvalidOperandException{}; }}, \
 		    a, b); \
 	}
 
