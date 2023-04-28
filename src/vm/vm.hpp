@@ -14,7 +14,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 #include "../common.hpp"
 #include "op.hpp"
@@ -43,9 +43,9 @@ bool truthy(NoriValue const &);
 template <std::derived_from<std::basic_istream<char>> T>
 class VM {
   public:
-	VM(T &stream, std::size_t buffer_size)
-	    : _stream{stream}, _buffer{new std::uint8_t[buffer_size]}, _buffer_size{buffer_size}, _buffer_offset{0},
-	      _ip{_buffer}, _stack{}, _reversed{false} {
+	VM(T &stream, std::size_t buffer_size, std::ostream &output, std::istream &input)
+	    : _stream{stream}, _output{output}, _input{input}, _buffer{new std::uint8_t[buffer_size]},
+	      _buffer_size{buffer_size}, _buffer_offset{0}, _ip{_buffer}, _stack{}, _reversed{false} {
 		load(0);
 	}
 	~VM() { delete[] _buffer; }
@@ -83,7 +83,7 @@ class VM {
 
 			case Op::NumericIn: {
 				double res;
-				if (std::cin >> res)
+				if (_input >> res)
 					push(res);
 				advance();
 				break;
@@ -91,29 +91,28 @@ class VM {
 
 			case Op::In: {
 				std::string res;
-				std::getline(std::cin, res);
+				std::getline(_input, res);
 				push(res);
 				advance();
 				break;
 			}
 
 			case Op::AsciiIn: {
-				char res;
-				std::cin >> res;
+				char res = _input.get();
 				push(static_cast<double>(res));
 				advance();
 				break;
 			}
 
 			case Op::Out:
-				std::visit([](auto const &val) { fmt::print("{}", val); }, pop());
+				std::visit([&](auto const &val) { _output << fmt::format("{}", val); }, pop());
 				advance();
 				break;
 
 			case Op::AsciiOut:
 				std::visit(
 				    overloaded{
-				        [](double const &&val) { fmt::print("{}", static_cast<char>(val)); },
+				        [&](double const &&val) { _output << fmt::format("{}", static_cast<char>(val)); },
 				        [](std::string const &&) { throw std::runtime_error{"Ascii out on string"}; }},
 				    pop());
 				advance();
@@ -229,6 +228,8 @@ class VM {
 
   private:
 	T &_stream;
+	std::ostream &_output;
+	std::istream &_input;
 	std::uint8_t *const _buffer;
 	std::size_t const _buffer_size;
 	std::size_t _buffer_offset;

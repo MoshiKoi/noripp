@@ -34,6 +34,7 @@ namespace nori::parse {
 	X(JumpBegin, 'W') \
 	X(LBracket, '[') \
 	X(RBracket, ']') \
+	X(Question, '?') \
 
 #define X(Name, Symbol) Name,
 

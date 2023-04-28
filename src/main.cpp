@@ -9,45 +9,7 @@
 
 #include <fmt/ranges.h>
 
-#include "compile.hpp"
-#include "parse/parse.hpp"
-#include "parse/tokenio.hpp"
-#include "parse/tokens.hpp"
-#include "vm/vm.hpp"
-
-int
-run_stream(std::istream &s) {
-	nori::vm::VM vm{s, 255};
-	try {
-		vm.exec();
-		return 0;
-	} catch (nori::vm::InvalidOperandException) {
-		std::cerr << "Attempted to operate on two invalid operands" << std::endl;
-		return 1;
-	} catch (nori::vm::StackException) {
-		std::cerr << "Stack doesn't contain enough elements" << std::endl;
-		return 1;
-	} catch (std::runtime_error err) {
-		std::cerr << err.what() << std::endl;
-		return 1;
-	}
-}
-
-std::vector<char>
-compile(std::string_view const &source, bool debug = false) {
-	nori::parse::Tokens toks{source};
-
-	auto iter = std::begin(toks);
-	auto const end = std::end(toks);
-	auto const nodes = nori::parse::parse(iter, end);
-
-	if (debug) {
-		fmt::print("{}\n", toks);
-	}
-
-	auto const buffer = nori::compile(nodes);
-	return buffer;
-}
+#include "api.hpp"
 
 int
 run(int argc, char const **argv) {
@@ -63,8 +25,6 @@ run(int argc, char const **argv) {
 
 int
 build(int argc, char const **argv) {
-	using namespace nori::vm;
-
 	if (argc < 2) {
 		fmt::print("File required\n");
 		return 1;
@@ -85,9 +45,8 @@ build(int argc, char const **argv) {
 	std::string const source = sourcestream.str();
 
 	try {
-		auto const buffer = compile(source);
 		std::ofstream bfs{filename, std::ios_base::binary | std::ios_base::trunc};
-		bfs.write(buffer.data(), buffer.size());
+		compile(source, bfs);
 	} catch (nori::parse::UnexpectedTokenError err) {
 		std::cerr << "Unexpected token: " << err.actual << ", expected ";
 		for (auto const &expected : err.expected)
@@ -121,8 +80,7 @@ exec(int argc, char const **argv) {
 	std::stringstream ss{};
 
 	try {
-		auto const buffer = compile(source);
-		ss.write(buffer.data(), buffer.size());
+		compile(source, ss);
 	} catch (nori::parse::UnexpectedTokenError err) {
 		std::cerr << "Unexpected token: " << err.actual << ", expected ";
 		for (auto const &expected : err.expected)
