@@ -28,23 +28,17 @@ class InvalidOperandException {};
 class StackException {};
 
 #define XBINOPS \
-	X(add, +, Op::Add) \
-	X(sub, -, Op::Sub) \
-	X(div, /, Op::Mul) \
-	X(mul, *, Op::Div)
+	X(Op::Add, [](double const &a, double const &b) { return a + b; }) \
+	X(Op::Sub, [](double const &a, double const &b) { return a - b; }) \
+	X(Op::Mul, [](double const &a, double const &b) { return a * b; }) \
+	X(Op::Div, [](double const &a, double const &b) { return a / b; }) \
+	X(Op::Pow, [](double const &a, double const &b) { return std::pow(a, b); }) \
+	X(Op::Mod, [](double const &a, double const &b) { return a - std::floor(a / b) * b; })
 
-#define X(Name, ...) void Name(NoriValue const &, NoriValue &);
-
-XBINOPS
-
-NoriValue pow(NoriValue const &, NoriValue const &);
-NoriValue mod(NoriValue const &, NoriValue const &);
 NoriValue floor(NoriValue const &);
 NoriValue ceil(NoriValue const &);
 NoriValue root(NoriValue const &);
 bool truthy(NoriValue const &);
-
-#undef X
 
 template <std::derived_from<std::basic_istream<char>> T>
 class VM {
@@ -140,39 +134,30 @@ class VM {
 				advance();
 				break;
 
-#define X(Name, _, OpCode) \
-	case OpCode: \
+#define X(OpCode, Fn) \
+	case OpCode: { \
 		if (_stack.size() < 2) { \
 			throw StackException{}; \
 		} \
-		Name(peek(), peek(1)); \
+		NoriValue &a = peek(1); \
+		NoriValue &b = peek(0); \
+		std::visit( \
+		    overloaded{ \
+		        [&](double const &a_val, double const &b_val) -> void { a.emplace<double>((Fn)(a_val, b_val)); }, \
+		        [](auto, auto) -> void { throw InvalidOperandException{}; }}, \
+		    a, b); \
 		pop(); \
 		advance(); \
-		break;
+		break; \
+	}
 
 				XBINOPS
 #undef X
-
-			case Op::Pow: {
-				auto x = pop();
-				auto y = pop();
-				push(pow(x, y));
-				advance();
-				break;
-			}
 
 			case Op::Root:
 				push(root(pop()));
 				advance();
 				break;
-
-			case Op::Mod: {
-				auto x = pop();
-				auto y = pop();
-				push(mod(x, y));
-				advance();
-				break;
-			}
 
 			case Op::Ceil:
 				push(ceil(pop()));

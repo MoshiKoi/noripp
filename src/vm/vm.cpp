@@ -6,35 +6,6 @@
 
 namespace nori::vm {
 
-#define X(Name, Op, _) \
-	void Name(NoriValue const&a, NoriValue &b) { \
-		 std::visit( \
-		    overloaded{ \
-		        [&](double const &a_val, double const &b_val) -> void { b.emplace<double>(a_val Op b_val); }, \
-		        [](auto, auto) -> void { throw InvalidOperandException{}; }}, \
-		    a, b); \
-	}
-
-XBINOPS
-
-NoriValue
-mod(NoriValue const &a, NoriValue const &b) {
-	return std::visit(
-	    overloaded{
-	        [](double const &a, double const &b) -> NoriValue { return a - std::floor(a / b) * b; },
-	        [](auto, auto) -> NoriValue { throw InvalidOperandException{}; }},
-	    a, b);
-}
-
-NoriValue
-pow(NoriValue const &a, NoriValue const &b) {
-	return std::visit(
-	    overloaded{
-	        [](double const &a, double const &b) -> NoriValue { return std::pow(a, b); },
-	        [](auto, auto) -> NoriValue { throw InvalidOperandException{}; }},
-	    a, b);
-}
-
 NoriValue
 floor(NoriValue const &a) {
 	return std::visit(
