@@ -44,6 +44,26 @@ class Tokens {
 					XSYMBOLS
 
 #undef X
+				case '~':
+					++_cur;
+					if (_cur != _end && *_cur == '~') {
+						while (_cur != _end) {
+							++_cur;
+							if (*_cur == '~') {
+								++_cur;
+								if (_cur != _end && *_cur == '~')
+									break;
+							}
+						}
+						if (_cur == _end)
+						{
+							_currentToken = {.type = TokenType::Error };
+							return *this;
+						} else {
+							++_cur;
+						}
+						continue;
+					}
 				case 'F': is_double = true; ++_cur;
 				case '0' ... '9': {
 					auto const begin = _cur;
