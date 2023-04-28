@@ -83,15 +83,15 @@ class VM {
 
 			case Op::NumericIn: {
 				double res;
-				std::cin >> res;
-				push(res);
+				if (std::cin >> res)
+					push(res);
 				advance();
 				break;
 			}
 
 			case Op::In: {
 				std::string res;
-				std::cin >> res;
+				std::getline(std::cin, res);
 				push(res);
 				advance();
 				break;
