@@ -55,9 +55,8 @@ class Tokens {
 									break;
 							}
 						}
-						if (_cur == _end)
-						{
-							_currentToken = {.type = TokenType::Error };
+						if (_cur == _end) {
+							_currentToken = {.type = TokenType::Error};
 							return *this;
 						} else {
 							++_cur;
@@ -93,7 +92,10 @@ class Tokens {
 					while (_cur != _end && *_cur != quote_char)
 						++_cur;
 
-					_currentToken = {.type = TokenType::Value, .value = std::string{begin, _cur}};
+					if (quote_char == '|')
+						_currentToken = {.type = TokenType::Identifier, .value = std::string{begin, _cur}};
+					else
+						_currentToken = {.type = TokenType::Value, .value = std::string{begin, _cur}};
 					++_cur;
 					break;
 				}

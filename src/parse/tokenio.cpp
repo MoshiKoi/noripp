@@ -30,7 +30,14 @@ operator<<(std::ostream &os, nori::parse::Token const &tok) {
 			        }
 			        os << "\")";
 		        }},
-		    tok.value.value());
+		    tok.value);
+		break;
+	case nori::parse::TokenType::Identifier:
+		std::visit(
+		    overloaded{
+		        [&](double const &val) { throw std::runtime_error{"Identifier should have a string value"}; },
+		        [&](std::string const &val) { os << "Var(" << val << ')'; }},
+		    tok.value);
 		break;
 	case nori::parse::TokenType::Error: os << "Error"; break;
 	default: throw new std::runtime_error{"Unhandled token type"};
@@ -44,6 +51,7 @@ operator<<(std::ostream &os, nori::parse::TokenType const &ty) {
 		XSYMBOLS
 #undef X
 	case nori::parse::TokenType::Value: os << "Value"; break;
+	case nori::parse::TokenType::Identifier: os << "Identifier"; break;
 	case nori::parse::TokenType::Error: os << "Error"; break;
 	default: throw new std::runtime_error{"Unhandled token type"};
 	}

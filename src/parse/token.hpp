@@ -38,13 +38,13 @@ namespace nori::parse {
 
 #define X(Name, Symbol) Name,
 
-enum class TokenType { Value, Error, XSYMBOLS };
+enum class TokenType { Value, Identifier, Error, XSYMBOLS };
 
 #undef X
 
 struct Token {
 	TokenType type;
-	std::optional<NoriValue> value;
+	std::variant<double, std::string> value;
 };
 
 } // namespace nori::parse

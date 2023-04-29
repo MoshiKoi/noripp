@@ -40,7 +40,7 @@ parse_push(Iter &iter, Iter const &end) {
 
 	if (tok.type == TokenType::Value) {
 		++iter;
-		return PushNode{tok.value.value()};
+		return PushNode{tok.value};
 	}
 
 	throw UnexpectedTokenError({TokenType::Value}, tok);
