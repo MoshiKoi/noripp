@@ -11,7 +11,8 @@ create_test_sourcelist(Tests
   test_comments.cpp
   test_io.cpp
   test_stack_reversal.cpp
-  test_swap.cpp)
+  test_swap.cpp
+  test_variables.cpp)
 
 add_executable(testdriver ${Tests})
 target_link_libraries(testdriver PUBLIC TestUtils)

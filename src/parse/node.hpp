@@ -34,6 +34,10 @@ namespace nori::parse {
 	X(JumpBegin, JumpBeginNode)
 
 class PushNode;
+class PushVar;
+class SetVarPop;
+class SetVarValue;
+class ConditionalNode;
 
 #define X(_, NodeName) \
 	class NodeName {};
@@ -42,11 +46,9 @@ XNODES
 
 #undef X
 
-class ConditionalNode;
-
 #define X(_, NodeName) NodeName,
 
-using Node = std::variant<PushNode, XNODES ConditionalNode>;
+using Node = std::variant<XNODES PushNode, PushVar, SetVarPop, SetVarValue, ConditionalNode>;
 
 #undef X
 
@@ -55,6 +57,25 @@ class PushNode {
   public:
 	NoriValue const value;
 	PushNode(NoriValue const &value) : value{value} {}
+};
+
+class PushVar {
+  public:
+	std::string const name;
+	PushVar(std::string const &name) : name{name} {}
+};
+
+class SetVarPop {
+  public:
+	std::string const name;
+	SetVarPop(std::string const &name) : name{name} {}
+};
+
+class SetVarValue {
+  public:
+	std::string const name;
+	NoriValue const value;
+	SetVarValue(std::string const &name, NoriValue const &value) : name{name}, value{value} {}
 };
 
 class ConditionalNode {

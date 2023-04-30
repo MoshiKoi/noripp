@@ -45,11 +45,13 @@ class VM {
   public:
 	VM(T &stream, std::size_t buffer_size, std::ostream &output, std::istream &input)
 	    : _stream{stream}, _output{output}, _input{input}, _buffer{new std::uint8_t[buffer_size]},
-	      _buffer_size{buffer_size}, _buffer_offset{0}, _ip{_buffer}, _stack{}, _reversed{false} {
+	      _buffer_size{buffer_size}, _buffer_offset{0}, _ip{_buffer}, _vars{}, _stack{}, _reversed{false} {
 		load(0);
 	}
 	~VM() { delete[] _buffer; }
 	void exec() {
+		_vars.reserve(*_ip);
+		advance();
 		while (true) {
 			switch (*_ip) {
 			case Op::Return: return;
@@ -76,10 +78,23 @@ class VM {
 				break;
 			}
 
+			case Op::PushVar:
+				advance();
+				push(get_var(*_ip));
+				advance();
+				break;
+
 			case Op::Pop:
 				pop();
 				advance();
 				break;
+
+			case Op::SetVarPop: {
+				advance();
+				set_var(*_ip, pop());
+				advance();
+				break;
+			}
 
 			case Op::NumericIn: {
 				double res;
@@ -237,6 +252,8 @@ class VM {
 	std::deque<NoriValue> _stack;
 	bool _reversed;
 
+	std::vector<NoriValue> _vars;
+
 	// Randomness
 
 	std::random_device device;
@@ -321,6 +338,21 @@ class VM {
 			auto first = _stack.back();
 			_stack.emplace_back(first);
 		}
+	}
+
+	NoriValue get_var(std::uint8_t index) {
+		if (index < _vars.size()) {
+			return _vars[index];
+		} else {
+			return 0.0;
+		}
+	}
+
+	void set_var(std::uint8_t index, NoriValue value) {
+		if (index >= _vars.size()) {
+			_vars.resize(index + 1);
+		}
+		_vars[index] = value;
 	}
 };
 

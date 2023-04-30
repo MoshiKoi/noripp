@@ -32,7 +32,7 @@ namespace nori::vm {
 
 #define X(_, Op) Op,
 
-enum Op : std::uint8_t { Return, Push, PushString, ForwardJumpFalse, BackwardJumpTrue, XNODES_TO_OP };
+enum Op : std::uint8_t { Return, Push, PushString, PushVar, SetVarPop, ForwardJumpFalse, BackwardJumpTrue, XNODES_TO_OP };
 
 #undef X
 

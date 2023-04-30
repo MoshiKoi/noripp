@@ -13,7 +13,6 @@
 #include "token.hpp"
 #include "tokenio.hpp"
 
-
 namespace nori::parse {
 
 class UnexpectedEndOfInput {
@@ -31,7 +30,7 @@ class UnexpectedTokenError {
 };
 
 template <std::input_iterator Iter>
-PushNode
+Node
 parse_push(Iter &iter, Iter const &end) {
 	if (iter == end)
 		throw std::runtime_error{"Unexpected end of input"};
@@ -41,9 +40,31 @@ parse_push(Iter &iter, Iter const &end) {
 	if (tok.type == TokenType::Value) {
 		++iter;
 		return PushNode{tok.value};
+	} else if (tok.type == TokenType::Identifier) {
+		++iter;
+		return PushVar{std::get<std::string>(tok.value)};
 	}
 
 	throw UnexpectedTokenError({TokenType::Value}, tok);
+}
+
+template <std::input_iterator Iter>
+Node
+parse_var(Iter &iter, Iter const &end) {
+	std::string const name = std::get<std::string>((*iter).value);
+	++iter;
+	if (iter == end) {
+		throw UnexpectedEndOfInput{{TokenType::Pop, TokenType::Value}};
+	}
+	switch ((*iter).type) {
+	case TokenType::Pop: ++iter; return SetVarPop{name};
+	case TokenType::Value: {
+		NoriValue const value = (*iter).value;
+		++iter;
+		return SetVarValue{name, value};
+	}
+	default: throw UnexpectedTokenError{{TokenType::Pop, TokenType::Value}, *iter};
+	}
 }
 
 template <std::input_iterator Iter>
@@ -58,6 +79,7 @@ parse(Iter &iter, Iter const &end) {
 			++iter;
 			nodes.emplace_back(parse_push(iter, end));
 			break;
+		case TokenType::Identifier: nodes.emplace_back(parse_var(iter, end)); break;
 		case TokenType::LBracket:
 			++iter;
 			nodes.emplace_back(ConditionalNode{parse(iter, end)});
