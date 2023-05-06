@@ -45,7 +45,7 @@ class VM {
   public:
 	VM(T &stream, std::size_t buffer_size, std::ostream &output, std::istream &input)
 	    : _stream{stream}, _output{output}, _input{input}, _buffer{new std::uint8_t[buffer_size]},
-	      _buffer_size{buffer_size}, _buffer_offset{0}, _ip{_buffer}, _vars{}, _stack{}, _reversed{false} {
+	      _buffer_size{buffer_size}, _buffer_offset{0}, _ip{_buffer}, _stack{}, _reversed{false}, _vars{} {
 		load(0);
 	}
 	~VM() { delete[] _buffer; }
@@ -142,6 +142,15 @@ class VM {
 				reverse();
 				advance();
 				break;
+
+			case Op::Bury: {
+				auto const val = pop();
+				reverse();
+				push(val);
+				reverse();
+				advance();
+				break;
+			}
 
 			case Op::Dup:
 				dup();

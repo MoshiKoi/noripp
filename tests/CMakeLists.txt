@@ -8,6 +8,7 @@ target_link_libraries(TestUtils PUBLIC API fmt::fmt)
 create_test_sourcelist(Tests
   testdriver.cpp
   test_hello_world.cpp
+  test_bury.cpp
   test_comments.cpp
   test_io.cpp
   test_stack_reversal.cpp
